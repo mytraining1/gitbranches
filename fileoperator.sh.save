@@ -1,0 +1,7 @@
+#!/bin/bash
+
+myfile="/home/rps/Desktop/shellprogram/variable.sh"
+
+if [ -e $myfile ]
+
+

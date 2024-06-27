@@ -1,0 +1,651 @@
+create table employee
+(
+id number(10),
+name varchar2(30),
+dept varchar2(30),
+salary number(10,2),
+age number(10)
+);
+
+describe employee;
+
+insert into employee values(3,'ankit','developer',56000,25);
+
+select * from employee;
+select id,name from employee;
+select id,name, age from employee;
+select id,name,age,salary, dept from employee;
+
+delete from employee where id=3;
+
+update employee set salary=42000 where id=2;
+update employee set salary=58000, name='ankit raj' where id=3;
+
+insert into employee values(4,'rahul','tester',62000,26);
+
+insert into employee(id,name,dept) values(5,'manas','tester');
+insert into employee(id,name,age) values(6,'raj',30);
+
+update employee set dept='developer',salary=60000 where id=6;
+update employee set age=25,salary=45000 where id=5;
+=========================================================
+
+ddl commands
+
+rename employee to emp;
+
+select * from employee;
+select * from emp;
+
+rename emp to employee;
+
+alter table employee add (email varchar2(30));
+alter table employee drop column email;
+alter table employee rename column salary to sal;
+alter table employee modify (name varchar2(50));
+
+desc employee;
+
+=================================================================
+SQL clauses:-
+-------------- 
+select * from employee;
+alter table employee rename column sal to salary;
+
+select id,name as empname , salary, salary+10000 as bonus from employee;
+
+select id,name,salary, salary/30 as perdaysalary from employee;
+
+SELECT * from employee where dept='Hr';
+SELECT * from employee where dept='hr';
+
+select * from employee where dept='hr' and age > 40;
+select * from employee where dept='hr' or age > 26;
+
+insert into employee values(11,'sneha','hr',55000,32);
+
+select * from employee order by age;
+select * from employee order by age desc;
+
+select * from employee
+where dept='hr'
+order by salary;
+
+select * from employee
+where dept='hr'
+order by salary desc;
+
+
+select * from employee;
+
+select dept from employee;
+
+select dept from employee
+group by dept;
+
+select dept,count(id),sum(salary) from employee
+group by dept;
+
+select min(salary) from employee;
+
+select dept,min(salary) from employee
+group by dept;
+
+select dept,count(id),sum(salary),min(salary),max(salary),avg(salary) from employee
+group by dept;
+
+select dept,count(id) from employee 
+group by dept 
+order by count(id);
+
+select dept, sum(salary) from employee
+group by dept
+order by sum(salary) desc;
+
+select dept, sum(salary) from employee
+where dept !='admin'
+group by dept
+order by sum(salary) desc;
+
+
+select dept,count(id) from employee 
+group by dept
+having count(id)>2
+order by count(id);
+
+select dept,sum(salary) from employee 
+group by dept
+having sum(salary)>100000;
+
+====================================================================================
+sql constraint: 
+
+create table emp2
+(
+id number(10) primary key,
+name varchar2(30) not null,
+dept varchar(30)
+);
+
+describe emp2;
+
+insert into emp2 values(1,'rahul','hr');
+insert into emp2 values(2,'manas','hr');
+insert into emp2(id,name) values(3,'john');
+
+select * from emp2;
+
+create table emp3
+(
+id number(10) primary key,
+name varchar2(30) not null,
+dept varchar(30) default 'trainee',
+emailid varchar2(30) unique,
+mobileNo varchar2(30) unique,
+age number(10) check(age > 22)
+);
+
+describe emp3;
+
+insert into emp3 values(1,'john','developer','john@yy.com','78658878',30);
+insert into emp3 values(2,'manas','developer','manas@yy.com','68888989',30);
+insert into emp3(id,name,emailid,age) values (3,'sourab','sourab@gmail.com',25);
+insert into emp3(id,name,emailid,age) values (4,'rohit','rohit@gmail.com',17);
+
+select * from emp3;
+
+foreign key:
+-------------
+
+create table dept
+(
+id number(10) primary key,
+name varchar2(30) not null,
+manager varchar2(30) 
+);
+
+insert into dept values(1,'hr','sumit');
+insert into dept values(2,'developer','raj');
+
+select * from dept;
+
+create table emp4
+(
+id number(10) primary key,
+name varchar2(30),
+age number(10),
+salary number(10),
+deptid number(10),
+constraint fk foreign key(deptid) references dept(id) on delete cascade
+);
+
+insert into emp4 values(101,'suraj',31,60000,1);
+insert into emp4 values(102,'ankit',31,70000,2);
+insert into emp4 values(103,'ramesh',31,50000,2);
+insert into emp4 values(104,'rahul',31,40000,2);
+insert into emp4 values(105,'sourab',31,30000,1);
+insert into emp4(id,name,age,salary) values (103,'mohit',26,46000);
+
+select * from emp4;
+
+delete from dept where id=2;
+
+drop table emp4;
+drop table dept;
+
+
+====================================================================
+like operator:-
+--------------- 
+
+select * from employee;
+
+select * from employee where name like 's%';
+select * from employee where name like '%t';
+select * from employee where name like '_a%';
+select * from employee where name like '__h%';
+select * from employee where name like '%a_';
+select * from employee where name like '%a%';
+
+=========================================================================
+
+sub query:-
+------------ 
+
+select * from employee;
+
+select * from employee where salary > 50000;
+
+select salary from employee where name='suraj';
+
+select * from employee 
+where salary > (select salary from employee where name='suraj'); 
+
+in any all operator:
+--------------------
+select * from employee where id=2;
+
+select * from employee where id=2,5,6;
+
+select * from employee where id in (2,5,6);
+
+select * from employee where id > 3,5,7;
+
+select * from employee where id > any (3,5,7);
+
+select * from employee where id > all (3,5,7);
+
+
+multi row sub query:-
+----------------------
+select * from employee 
+where salary > all (select salary from employee where dept='developer');
+
+
+select * from employee 
+where salary > any (select salary from employee where dept='developer') and dept!='developer';
+
+select max(salary) from employee;
+
+select max(salary) from employee 
+where salary < (select max(salary) from employee);
+
+
+======================================================
+practice code:
+
+select max(salary) from employee;
+
+select * from employee 
+where salary = (select max(salary) from employee);
+
+select dept,avg(salary) from employee
+group by dept;
+
+select dept from employee
+where dept = (select dept from employee group by dept having avg(salary) = min(avg(salary)));
+
+select * from employee;
+
+select id,name,dept,salary 
+from employee e
+where salary > (select avg(salary) from employee where dept = e.dept);
+
+select dept,min(salary) from employee 
+group by dept;
+
+select id,name,salary,dept from employee 
+where salary in (select min(salary) from employee group by dept) 
+order by salary;
+
+===============================================================
+sql joins:
+------------
+
+select * from dept;
+select * from emp4;
+
+
+insert into dept values(2,'developer','rohit');
+insert into dept values(4,'marketing','ganesh');
+
+select * from dept;
+
+select * from emp4;
+
+insert into emp4 values(102,'mahesh',30,70000,2);
+insert into emp4 values(103,'rajesh',24,80000,2);
+insert into emp4 values(104,'sunil',33,60000,1);
+insert into emp4 values(106,'rohit',31,40000,4);
+insert into emp4(id,name,age,salary) values(107,'manas',28,50000);
+insert into emp4(id,name,age,salary) values(108,'john',29,60000);
+
+
+select * from emp4;
+
+select * from emp4
+inner join
+dept 
+on emp4.deptid=dept.id;
+
+select * from emp4
+left outer join
+dept 
+on emp4.deptid=dept.id;
+
+
+select * from emp4
+right outer join
+dept 
+on emp4.deptid=dept.id;
+
+select * from emp4
+full outer join
+dept 
+on emp4.deptid=dept.id;
+
+select e.id,e.name,e.salary,e.deptid,d.name,d.manager from emp4 e
+inner join 
+dept d 
+on e.deptid=d.id;
+
+select e.id,e.name,e.salary,e.deptid,d.name,d.manager from emp4 e
+inner join 
+dept d 
+on e.deptid=d.id
+order by e.salary;
+
+select e.id,e.name,e.salary,e.deptid,d.name,d.manager from emp4 e
+inner join 
+dept d 
+on e.deptid=d.id
+where e.salary>30000
+order by e.salary;
+
+select * from emp4 
+cross join 
+dept
+
+
+select * from emp4;
+
+select t1.id,t1.name,t2.salary
+from  emp4 t1,
+emp4 t2
+where t1.salary< t2.salary;
+
+===============================================================================
+
+set operator:-
+--------------- 
+
+create table bangalorebranch
+(
+id number(10),
+name varchar2(30),
+designation varchar2(30)
+);
+
+create table chennaibranch
+(
+id number(10),
+name varchar2(30),
+designation varchar2(30)
+);
+
+insert into bangalorebranch values(1,'a','hr');
+insert into bangalorebranch values(2,'b','dev');
+insert into bangalorebranch values(3,'c','dev');
+insert into bangalorebranch values(4,'d','hr');
+
+insert into chennaibranch values(1,'a','marketing');
+insert into chennaibranch values(2,'b','marketing');
+insert into chennaibranch values(3,'c','dev');
+insert into chennaibranch values(4,'d','hr');
+insert into chennaibranch values(5,'e','hr');
+
+select * from bangalorebranch;
+select * from chennaibranch;
+
+
+select * from bangalorebranch
+union
+select * from chennaibranch;
+
+select * from bangalorebranch
+union all
+select * from chennaibranch;
+
+select * from bangalorebranch
+intersect
+select * from chennaibranch;
+
+select * from bangalorebranch
+minus
+select * from chennaibranch;
+
+=================================================================
+
+create sequence empidsequence
+minvalue 1000
+start with 1000
+increment by 1;
+
+create table emp5
+(
+id number(10) primary key, 
+name varchar2(30),
+age number(10),
+salary number(10)
+);
+
+insert into emp5 values(empidsequence.nextval,'ankit',32,55000);
+
+select * from emp5;
+============================================================
+
+sql functions. 
+---------------------
+
+select * from employee;
+
+select round(100.678) from dual;
+select round(100.234) from dual;
+
+select round(100.6789, 2) from dual;
+select trunc(100.6789, 2) from dual;
+select mod(5,3) from dual;
+
+select id,name,dept,salary,round(salary/30) as perdaysalar from employee;
+
+
+select concat('hello','world') from dual;
+
+select id, name,concat(name,salary) from employee;
+
+select id, name, concat('Mr ',name), length(name), instr(name,'a'), lpad(name,10,'-'), 
+rpad(name,10,'#'),replace(name,'a','  ') from employee;
+
+select id,name,upper(name),lower(name),initcap(name) from employee;
+
+select * from employee where lower(name)='ramesh';
+select * from employee where upper(name)='RAMESH';
+
+update employee set name='Ramesh' where id=1;
+
+==================================================================================
+
+select * from employee;
+
+select sysdate from dual;
+
+select sysdate+2 from dual;
+
+select sysdate-2 from dual;
+
+alter table employee add (doj date, dob date);
+
+update employee set dob='20-oct-95',doj='10-feb-23' where id=1;
+update employee set dob='22-nov-96',doj='11-mar-22' where id=2;
+update employee set dob='21-jan-97',doj='20-aug-21' where id=3;
+update employee set dob='14-feb-93',doj='1-sep-22' where id=4;
+update employee set dob='24-oct-89',doj='21-oct-23' where id=5;
+update employee set dob='10-dec-92',doj='5-jan-24' where id=6;
+update employee set dob='25-mar-88',doj='10-apr-23' where id=7;
+
+update employee set dob='22-nov-94',doj='11-mar-22' where id=8;
+update employee set dob='21-jan-92',doj='20-aug-21' where id=9;
+update employee set dob='14-feb-95',doj='1-sep-22' where id=10;
+update employee set dob='24-oct-90',doj='21-oct-23' where id=11;
+
+
+select id,name,dob, round((sysdate-dob)/365) as year from employee;
+
+select id,name,dob, round((sysdate-dob)/365) as year from employee
+where round((sysdate-dob)/365) > 30;
+
+select id,name,doj, round(sysdate-doj) as noofdays , round((sysdate-doj)/7) as week , 
+round((sysdate-doj)/365) as year from employee;
+
+
+select id,name,doj, round(months_between(sysdate,doj)) from employee;
+
+select last_day('27-jun-24') from dual;
+select last_day('19-feb-24') from dual;
+select last_day('19-feb-23') from dual;
+select last_day('10-jun-24') from dual;
+
+select next_day('27-jun-24','sunday') from dual;
+select next_day('27-jun-24','monday') from dual;
+select next_day('27-jun-24','tuesday') from dual;
+
+select to_char(sysdate,'month - yy') from dual;
+select to_char(sysdate,'month - yyyy') from dual;
+select to_char(sysdate,'Day dd month yyyy') from dual;
+select to_char(sysdate,'Day dd month year') from dual;
+
+
+select id,name,dob, to_char(dob,'Day dd month yyyy') from employee;
+
+=============================================================================
+TCL:-
+--------
+
+create table emp10
+(
+id number(10),
+name varchar2(30),
+dept varchar2(30),
+age number(10)
+);
+
+insert into emp10 values(1,'john','hr',30);
+insert into emp10 values(2,'mahesh','developer',32);
+
+update emp10 set name='mahesh kumar' where id=2;
+select * from emp10;
+rollback;
+commit;
+
+================================================================================
+
+select * from employee;
+
+select dept,sum(salary),count(id) from employee
+group by dept;
+
+select id,name,dept,salary,
+count(id) over(partition by dept) as deptcount,
+sum(salary) over(partition by dept) as deptsum
+from employee;
+
+
+select id,name,dept,salary,
+rank() over(order by salary desc) as emprank
+from employee;
+
+select id,name,dept,salary,
+rank() over(order by salary) as emprank
+from employee;
+
+select id,name,dept,salary,
+rank() over(partition by dept order by salary desc) as emprank
+from employee;
+
+update employee set salary=50000 where id=2;
+update employee set salary=50000 where id=3;
+
+select id,name,dept,salary,
+dense_rank() over(order by salary desc) as emprank
+from employee;
+
+select * from (select id,name,dept,salary,
+dense_rank() over(order by salary desc) as emprank
+from employee) where emprank=3;
+
+select * from (select id,name,dept,salary,
+dense_rank() over(order by salary desc) as emprank
+from employee) where emprank=6;
+
+select * from (
+select id,name,dept,salary,
+count(id) over(partition by dept) as deptcount,
+dense_rank() over(partition by dept order by salary desc) as rank
+from employee) where deptcount >2;
+
+select * from (
+select id,name,dept,salary,
+count(id) over(partition by dept) as deptcount,
+dense_rank() over(partition by dept order by salary desc) as rank
+from employee) where dept='hr'
+
+=================================================================================
+analytic function ; lead and lag
+
+
+create table sales
+(
+saledate date, 
+amount number(10)
+);
+
+insert into sales values('20-jun-24',100);
+insert into sales values('21-jun-24',130);
+insert into sales values('22-jun-24',150);
+insert into sales values('23-jun-24',170);
+insert into sales values('24-jun-24',200);
+
+select * from sales;
+
+select saledate,amount,
+lag(amount,1) over(order by saledate) as previousdate
+from sales;
+
+
+select saledate,amount,
+lead(amount,1) over(order by saledate) as nextday
+from sales;
+
+
+select saledate,
+lag(amount,1) over(order by saledate) as previousdatesale,
+amount as todaysale,
+lead(amount,1) over(order by saledate) as nextdaysale
+from sales;
+
+================================================================================
+sql view;-
+-----------
+select * from employee;
+
+create view hrview as 
+select id,name,dept,age,doj from employee where dept='hr';
+
+select * from hrview;
+
+drop view hrview;
+==============================================================
+sql index:-
+------------ 
+create index nameindex on employee(name);
+
+select * from employee where name='raj';
+
+drop index nameindex;
+======================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
